@@ -11,16 +11,16 @@ default_floating_border pixel 1
 ### background apps ###
 
 # run picom
-exec_always --no-startup-id picom &
+exec_always --no-startup-id picom 
 
 # run mpd
-exec_always --no-startup-id mpd &
+exec_always --no-startup-id mpd
 
 # run dunst
-exec_always --no-startup-id dunst &
+exec_always --no-startup-id dunst
 
 # set wallpaper with nitrogen
-exec_always --no-startup-id nitrogen --restore & 
+exec_always --no-startup-id nitrogen --restore 
 
 # run i3-auto-layout
 # install with following command
