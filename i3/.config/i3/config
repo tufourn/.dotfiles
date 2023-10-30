@@ -20,7 +20,12 @@ exec_always --no-startup-id mpd &
 exec_always --no-startup-id dunst &
 
 # set wallpaper with nitrogen
-exec --no-startup-id nitrogen --set-auto $HOME/.wallpaper/bikergirl.jpg
+exec_always --no-startup-id nitrogen --restore & 
+
+# run i3-auto-layout
+# install with following command
+# $ cargo install i3-autolayout
+exec_always --no-startup-id i3-autolayout autolayout & 
 
 # start i3 components
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
