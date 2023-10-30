@@ -8,6 +8,8 @@ alert = #f38ba8
 disabled = #cdd6f4
 
 [bar/top]
+monitor = ${env:MONITOR:}
+
 width = 100%
 height = 18pt
 
