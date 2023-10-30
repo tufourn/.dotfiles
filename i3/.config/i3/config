@@ -16,8 +16,11 @@ exec_always --no-startup-id picom &
 # run mpd
 exec_always --no-startup-id mpd &
 
-#run dunst
+# run dunst
 exec_always --no-startup-id dunst &
+
+# set wallpaper with nitrogen
+exec --no-startup-id nitrogen --set-auto $HOME/.wallpaper/bikergirl.jpg
 
 # start i3 components
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
@@ -164,10 +167,10 @@ mode "resize" {
         # back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
         bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
+        bindsym $mod+p mode "default"
 }
 
-bindsym $mod+p mode "resize"
+bindsym $mod+r mode "resize"
 
 # start polybar
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
