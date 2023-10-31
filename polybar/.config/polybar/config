@@ -100,17 +100,17 @@ type = internal/network
 interval = 5
 format-connected = <label-connected>
 format-disconnected = <label-disconnected>
-label-disconnected = %{F#F0C674}%ifname%%{F#707880} disconnected
+label-disconnected = ""
 
 [module/wlan]
 inherit = network-base
 interface-type = wireless
-label-connected = %{F#F0C674}%ifname%%{F-} %essid%
+label-connected = %{F#A6E3A1}%ifname%%{F-} %essid%
 
 [module/eth]
 inherit = network-base
 interface-type = wired
-label-connected = %{F#F0C674}%ifname%%{F-}
+label-connected = %{F#A6E3A1}%ifname%%{F-}
 
 [module/battery]
 ; use the following command to list batteries and adapters
