@@ -5,8 +5,10 @@ set $mod Mod4
 font pango:JetBrainsMonoNerdFont 8
 
 # hide window title bar
-default_border pixel 1
-default_floating_border pixel 1
+default_border pixel 4
+default_floating_border pixel 4
+
+gaps inner 4
 
 ### background apps ###
 
