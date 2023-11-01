@@ -32,6 +32,9 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
 
+  -- show context
+  'nvim-treesitter/nvim-treesitter-context',
+
   -- Tmux nagivation integration
   'christoomey/vim-tmux-navigator',
 
@@ -115,11 +118,12 @@ require('lazy').setup({
   },
 
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    -- catppuccin
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 
@@ -418,7 +422,7 @@ local on_attach = function(_, bufnr)
 
   -- move up down block in visual mode
   vmap('J', ":m '>+1<CR>gv=gv")
-  vmap('K', ":m '>-2<CR>gv=gv")
+  vmap('K', ":m '<-2<CR>gv=gv")
 
   -- cursor stay in place when appending lines with J
   nmap('J', 'mzJ`z')
@@ -472,10 +476,10 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
+  pyright = {},
+  rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
@@ -559,6 +563,8 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
