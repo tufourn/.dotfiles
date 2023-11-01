@@ -31,6 +31,8 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+
+  -- Tmux nagivation integration
   'christoomey/vim-tmux-navigator',
 
   -- Detect tabstop and shiftwidth automatically
@@ -384,6 +386,14 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
+  local vmap = function(keys, func, desc)
+    if desc then
+      desc = 'LSP: ' .. desc
+    end
+
+    vim.keymap.set('v', keys, func, { buffer = bufnr, desc = desc })
+  end
+
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
@@ -405,6 +415,31 @@ local on_attach = function(_, bufnr)
   nmap('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
+
+  -- move up down block in visual mode
+  vmap('J', ":m '>+1<CR>gv=gv")
+  vmap('K', ":m '>-2<CR>gv=gv")
+
+  -- cursor stay in place when appending lines with J
+  nmap('J', 'mzJ`z')
+
+  -- center cursor when jumping
+  nmap('<C-d>', '<C-d>zz')
+  nmap('<C-u>', '<C-u>zz')
+  nmap('n', 'nzzzv')
+  nmap('N', 'Nzzzv')
+
+  -- paste without losing original paste buffer
+  vim.keymap.set('x', '<leader>p', '"_dP')
+
+  -- clipboard
+  nmap('<leader>y', '"+y')
+  nmap('<leader>Y', '"+Y')
+  vmap('<leader>y', '"+y')
+
+  -- delete to void
+  nmap('<leader>d', '"_d')
+  vmap('<leader>d', '"_d')
 
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)

@@ -5,8 +5,8 @@ set $mod Mod4
 font pango:JetBrainsMonoNerdFont 8
 
 # hide window title bar
-default_border pixel 4
-default_floating_border pixel 4
+default_border pixel 2
+default_floating_border pixel 0
 
 gaps inner 4
 
@@ -27,7 +27,7 @@ exec_always --no-startup-id nitrogen --restore
 # run i3-auto-layout
 # install with following command
 # $ cargo install i3-autolayout
-exec_always --no-startup-id i3-autolayout autolayout & 
+exec_always --no-startup-id $HOME/.cargo/bin/i3-autolayout autolayout
 
 # start i3 components
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
