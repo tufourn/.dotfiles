@@ -6,7 +6,7 @@ font pango:JetBrainsMonoNerdFont 8
 
 # hide window title bar
 default_border pixel 2
-default_floating_border pixel 0
+default_floating_border pixel 4
 
 gaps inner 4
 
@@ -178,6 +178,8 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
+
+bindsym Print exec "flameshot gui"
 
 # start polybar
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
