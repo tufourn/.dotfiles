@@ -1,5 +1,6 @@
 # set mod
 set $mod Mod4
+set $scripts_folder = "/home/tufourn/.config/i3/scripts"
 
 # set font
 font pango:JetBrainsMonoNerdFont 8
@@ -29,6 +30,12 @@ exec_always --no-startup-id nitrogen --restore
 # $ cargo install i3-autolayout
 exec_always --no-startup-id $HOME/.cargo/bin/i3-autolayout autolayout
 
+set $screen_laptop "eDP-1"
+set $screen_mid "DP-1-0"
+set $screen_right "HDMI-1"
+
+exec --no-startup-id xrandr --output $screen_laptop --pos 0x1480
+
 # start i3 components
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
@@ -51,7 +58,7 @@ bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+q kill
@@ -120,6 +127,9 @@ set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
+
+# assign workspaces to monitors
+# exec_always $scripts_folder/assign_workspace.sh
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
