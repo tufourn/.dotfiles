@@ -25,22 +25,10 @@ vim.opt.shiftwidth = 4
 vim.opt.termguicolors = true
 vim.opt.background = 'light'
 
-vim.keymap.set('n', '[d', function()
-  vim.diagnostic.jump { count = -1, float = true }
-end, { desc = 'Go to previous diagnostic message' })
-
-vim.keymap.set('n', ']d', function()
-  vim.diagnostic.jump { count = 1, float = true }
-end, { desc = 'Go to next diagnostic message' })
-
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
-vim.keymap.set('n', '<C-j>', '<cmd>cnext<CR>zz')
-vim.keymap.set('n', '<C-k>', '<cmd>cprev<CR>zz')
 vim.keymap.set('n', '<leader>j', '<cmd>lnext<CR>zz')
 vim.keymap.set('n', '<leader>k', '<cmd>lprev<CR>zz')
 vim.keymap.set('i', 'jk', '<Esc>')
@@ -75,14 +63,12 @@ vim.pack.add { { src = gh 'stevearc/oil.nvim' } }
 require('oil').setup {}
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 
-vim.pack.add { { src = gh 'mason-org/mason.nvim' } }
-require('mason').setup {}
-
 vim.pack.add { { src = gh 'stevearc/conform.nvim' } }
 local conform = require 'conform'
 conform.setup {
   formatters_by_ft = {
     lua = { 'stylua' },
+    nix = { 'alejandra' },
     c = { 'clang-format' },
   },
   default_format_opts = { lsp_format = 'fallback' },
@@ -100,7 +86,7 @@ conform.setup {
 }
 vim.keymap.set({ 'n', 'v' }, '<leader>F', function()
   conform.format { lsp_fallback = true, async = false, timeout_ms = 1000 }
-end, { desc = '[F]ormat Buffer' })
+end, { desc = 'Format Buffer' })
 
 vim.pack.add { { src = gh 'numToStr/FTerm.nvim' } }
 local fterm = require 'FTerm'
@@ -135,30 +121,68 @@ cmp.setup {
 vim.pack.add { { src = gh 'ibhagwan/fzf-lua' } }
 require('fzf-lua').setup {}
 
+vim.pack.add { { src = gh 'neovim/nvim-lspconfig' } }
+
+local function lsp_on_attach(_, bufnr)
+  local nmap = function(keys, func, desc)
+    if desc then
+      desc = 'LSP: ' .. desc
+    end
+    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+  end
+
+  nmap('<leader>rn', vim.lsp.buf.rename, 'Rename')
+  nmap('<leader>ca', vim.lsp.buf.code_action, 'Code Action')
+  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+
+  nmap('gd', vim.lsp.buf.definition, 'Go to Definition')
+  nmap('gD', vim.lsp.buf.declaration, 'Go to Declaration')
+  nmap('grn', vim.lsp.buf.rename, 'Rename')
+  nmap('grr', vim.lsp.buf.references, 'References')
+  nmap('gra', vim.lsp.buf.code_action, 'Code Action')
+  nmap('gri', vim.lsp.buf.implementation, 'Implementation')
+  nmap('grt', vim.lsp.buf.type_definition, 'Type Definition')
+
+  nmap('<leader>ds', vim.lsp.buf.document_symbol, 'Document Symbols')
+  nmap('<leader>ws', vim.lsp.buf.workspace_symbol, 'Workspace Symbols')
+
+  nmap('<leader>dq', vim.diagnostic.setqflist, 'Diagnostics to Quickfix')
+  nmap('<leader>dl', vim.diagnostic.setloclist, 'Diagnostics to Loclist')
+
+  nmap('[q', vim.cmd.cprev, 'Prev Quickfix')
+  nmap(']q', vim.cmd.cnext, 'Next Quickfix')
+  nmap('<leader>co', vim.cmd.copen, 'Open Quickfix')
+  nmap('<leader>cc', vim.cmd.cclose, 'Close Quickfix')
+
+  nmap('[d', function()
+    vim.diagnostic.jump { count = -1, float = true }
+  end, 'Prev Diagnostic')
+  nmap(']d', function()
+    vim.diagnostic.jump { count = 1, float = true }
+  end, 'Next Diagnostic')
+end
+
+vim.lsp.config('*', {
+  on_attach = lsp_on_attach,
+})
+
 vim.lsp.config('lua_ls', {
-  cmd = { 'lua-language-server' },
-  filetypes = { 'lua' },
-  root_markers = {
-    '.luarc.json',
-    '.luarc.jsonc',
-    '.luacheckrc',
-    '.stylua.toml',
-    'stylua.toml',
-    'selene.toml',
-    'selene.yml',
-    '.git',
-  },
   settings = {
     Lua = {
       runtime = { version = 'Lua 5.4' },
       completion = { enable = true },
       diagnostics = { enable = true, globals = { 'vim' } },
-      workspace = { library = { vim.env.VIMRUNTIME }, checkThirdParty = false },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file('', true),
+        checkThirdParty = false,
+      },
     },
   },
 })
 
 vim.lsp.enable {
   'lua_ls',
+  'nixd',
 }
 vim.diagnostic.config { virtual_text = true }

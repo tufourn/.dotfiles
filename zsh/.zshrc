@@ -1,4 +1,5 @@
-export EDITOR=vim
+export EDITOR=nvim
+export PATH=$HOME/.local/bin:$PATH
 
 setopt SHARE_HISTORY HIST_IGNORE_DUPS
 SAVEHIST=50000
@@ -9,7 +10,6 @@ autoload -U promptinit
 promptinit
 prompt pure
 
-alias cat="bat -p"
 alias find="fd"
 alias ls="eza"
 
@@ -22,3 +22,5 @@ fi;
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(~/.cargo/bin/zsh-patina activate)"
+
+bindkey -e
