@@ -29,8 +29,6 @@ vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
-vim.keymap.set('n', '<leader>j', '<cmd>lnext<CR>zz')
-vim.keymap.set('n', '<leader>k', '<cmd>lprev<CR>zz')
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
@@ -62,6 +60,12 @@ end, { desc = 'Buffer Local Keymaps (which-key)' })
 vim.pack.add { { src = gh 'stevearc/oil.nvim' } }
 require('oil').setup {}
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+
+vim.pack.add { { src = gh 'nvim-lua/plenary.nvim' } }
+
+vim.pack.add { { src = gh 'folke/todo-comments.nvim' } }
+local todo_comments = require 'todo-comments'
+todo_comments.setup {}
 
 vim.pack.add { { src = gh 'stevearc/conform.nvim' } }
 local conform = require 'conform'
@@ -119,52 +123,81 @@ cmp.setup {
 }
 
 vim.pack.add { { src = gh 'ibhagwan/fzf-lua' } }
-require('fzf-lua').setup {}
+local fzf_lua = require 'fzf-lua'
+fzf_lua.setup {
+  lsp = {
+    jump1 = true,
+  },
+}
+
+vim.keymap.set('n', '<leader><leader>', fzf_lua.files, { desc = 'Files' })
+vim.keymap.set('n', '<leader>,', fzf_lua.buffers, { desc = 'Buffers' })
+vim.keymap.set('n', '<leader>/', fzf_lua.blines, { desc = 'Search Buffer' })
+vim.keymap.set('n', '<leader>r', fzf_lua.resume, { desc = 'Resume fzf' })
+vim.keymap.set('n', '<leader>q', fzf_lua.quickfix, { desc = 'Quickfix List' })
+vim.keymap.set('n', '<leader>l', fzf_lua.loclist, { desc = 'Location List' })
+vim.keymap.set('n', '<leader>u', fzf_lua.undotree, { desc = 'Undotree' })
+
+vim.keymap.set('n', '<leader>fb', fzf_lua.buffers, { desc = 'Find Buffers' })
+vim.keymap.set('n', '<leader>ff', fzf_lua.files, { desc = 'Find Files' })
+vim.keymap.set('n', '<leader>fg', fzf_lua.git_files, { desc = 'Find Git Files' })
+vim.keymap.set('n', '<leader>fr', fzf_lua.oldfiles, { desc = 'Find Recent' })
+
+vim.keymap.set('n', '<leader>sb', fzf_lua.blines, { desc = 'Search Buffer' })
+vim.keymap.set('n', '<leader>sB', fzf_lua.lines, { desc = 'Search Open Buffers' })
+vim.keymap.set('n', '<leader>sg', fzf_lua.live_grep, { desc = 'Search Grep' })
+vim.keymap.set('n', '<leader>sw', fzf_lua.grep_cword, { desc = 'Search Word' })
+vim.keymap.set('n', '<leader>sW', fzf_lua.grep_cword, { desc = 'Search WORD' })
+vim.keymap.set('n', '<leader>sj', fzf_lua.jumps, { desc = 'Search Jumps' })
+vim.keymap.set('n', '<leader>sm', fzf_lua.marks, { desc = 'Search Marks' })
+vim.keymap.set('n', '<leader>sq', fzf_lua.grep_quickfix, { desc = 'Search Quickfix' })
+vim.keymap.set('n', '<leader>sl', fzf_lua.grep_loclist, { desc = 'Search Location' })
+
+vim.pack.add { { src = gh 'mrcjkb/rustaceanvim' } }
 
 vim.pack.add { { src = gh 'neovim/nvim-lspconfig' } }
-
-local function lsp_on_attach(_, bufnr)
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = 'LSP: ' .. desc
+autocmd('LspAttach', {
+  group = augroup('lsp-attach', { clear = true }),
+  callback = function(event)
+    local bufnr = event.buf
+    local nmap = function(keys, func, desc)
+      if desc then
+        desc = 'LSP: ' .. desc
+      end
+      vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-  end
 
-  nmap('<leader>rn', vim.lsp.buf.rename, 'Rename')
-  nmap('<leader>ca', vim.lsp.buf.code_action, 'Code Action')
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
-  nmap('gd', vim.lsp.buf.definition, 'Go to Definition')
-  nmap('gD', vim.lsp.buf.declaration, 'Go to Declaration')
-  nmap('grn', vim.lsp.buf.rename, 'Rename')
-  nmap('grr', vim.lsp.buf.references, 'References')
-  nmap('gra', vim.lsp.buf.code_action, 'Code Action')
-  nmap('gri', vim.lsp.buf.implementation, 'Implementation')
-  nmap('grt', vim.lsp.buf.type_definition, 'Type Definition')
+    nmap('grn', vim.lsp.buf.rename, 'Rename')
+    nmap('gra', fzf_lua.lsp_code_actions, 'Code Action')
+    nmap('gd', fzf_lua.lsp_definitions, 'Go to Definition')
+    nmap('gD', fzf_lua.lsp_declarations, 'Go to Declaration')
+    nmap('grr', fzf_lua.lsp_references, 'References')
+    nmap('gri', fzf_lua.lsp_implementations, 'Implementation')
+    nmap('grt', fzf_lua.lsp_typedefs, 'Type Definition')
 
-  nmap('<leader>ds', vim.lsp.buf.document_symbol, 'Document Symbols')
-  nmap('<leader>ws', vim.lsp.buf.workspace_symbol, 'Workspace Symbols')
+    nmap('<leader>ds', vim.lsp.buf.document_symbol, 'Document Symbols')
+    nmap('<leader>ws', vim.lsp.buf.workspace_symbol, 'Workspace Symbols')
 
-  nmap('<leader>dq', vim.diagnostic.setqflist, 'Diagnostics to Quickfix')
-  nmap('<leader>dl', vim.diagnostic.setloclist, 'Diagnostics to Loclist')
+    nmap('<leader>dq', function()
+      vim.diagnostic.setqflist { open = false }
+    end, 'Diagnostics to Quickfix')
+    nmap('<leader>dl', function()
+      vim.diagnostic.setloclist { open = false }
+    end, 'Diagnostics to Loclist')
 
-  nmap('[q', vim.cmd.cprev, 'Prev Quickfix')
-  nmap(']q', vim.cmd.cnext, 'Next Quickfix')
-  nmap('<leader>co', vim.cmd.copen, 'Open Quickfix')
-  nmap('<leader>cc', vim.cmd.cclose, 'Close Quickfix')
+    nmap('[q', vim.cmd.cprev, 'Prev Quickfix')
+    nmap(']q', vim.cmd.cnext, 'Next Quickfix')
 
-  nmap('[d', function()
-    vim.diagnostic.jump { count = -1, float = true }
-  end, 'Prev Diagnostic')
-  nmap(']d', function()
-    vim.diagnostic.jump { count = 1, float = true }
-  end, 'Next Diagnostic')
-end
-
-vim.lsp.config('*', {
-  on_attach = lsp_on_attach,
+    nmap('[d', function()
+      vim.diagnostic.jump { count = -1, float = true }
+    end, 'Prev Diagnostic')
+    nmap(']d', function()
+      vim.diagnostic.jump { count = 1, float = true }
+    end, 'Next Diagnostic')
+  end,
 })
 
 vim.lsp.config('lua_ls', {

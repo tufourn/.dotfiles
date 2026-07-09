@@ -4,3 +4,6 @@
 [submodule "zsh/.zsh/pure"]
 	path = zsh/.zsh/pure
 	url = https://github.com/sindresorhus/pure
+[submodule "zsh/.zsh/fzf-tab"]
+	path = zsh/.zsh/fzf-tab
+	url = https://github.com/aloxaf/fzf-tab

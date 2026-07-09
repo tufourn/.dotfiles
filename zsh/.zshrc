@@ -20,7 +20,9 @@ else
 	compinit -C;
 fi;
 
+source ~/.zsh/fzf-tab/fzf-tab.zsh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(~/.cargo/bin/zsh-patina activate)"
+source <(fzf --zsh)
 
 bindkey -e
