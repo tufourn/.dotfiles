@@ -34,6 +34,8 @@ vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+vim.diagnostic.config { virtual_text = true }
+
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
@@ -122,6 +124,40 @@ cmp.setup {
   signature = { enabled = true },
 }
 
+vim.pack.add { { src = gh 'lewis6991/gitsigns.nvim' } }
+local gitsigns = require 'gitsigns'
+gitsigns.setup()
+
+vim.keymap.set('n', '[c', function()
+  gitsigns.nav_hunk 'prev'
+end, { desc = 'Prevous Hunk' })
+
+vim.keymap.set('n', ']c', function()
+  gitsigns.nav_hunk 'next'
+end, { desc = 'Next Hunk' })
+
+vim.keymap.set('n', '<leader>hr', function()
+  if vim.wo.diff then
+    vim.cmd.normal { ']c', bang = true }
+  else
+    gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+  end
+end, { desc = 'Reset Hunk' })
+
+vim.keymap.set('n', '<leader>hs', function()
+  if vim.wo.diff then
+    vim.cmd.normal { ']c', bang = true }
+  else
+    gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+  end
+end, { desc = 'Stage Hunk' })
+
+vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'Reset Buffer' })
+vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'Stage Buffer' })
+vim.keymap.set('n', '<leader>hb', function()
+  gitsigns.blame_line { full = true }
+end, { desc = 'Blame Line' })
+
 vim.pack.add { { src = gh 'ibhagwan/fzf-lua' } }
 local fzf_lua = require 'fzf-lua'
 fzf_lua.setup {
@@ -153,7 +189,25 @@ vim.keymap.set('n', '<leader>sm', fzf_lua.marks, { desc = 'Search Marks' })
 vim.keymap.set('n', '<leader>sq', fzf_lua.grep_quickfix, { desc = 'Search Quickfix' })
 vim.keymap.set('n', '<leader>sl', fzf_lua.grep_loclist, { desc = 'Search Location' })
 
-vim.pack.add { { src = gh 'mrcjkb/rustaceanvim' } }
+vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter' } }
+require('nvim-treesitter').setup()
+
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function(ev)
+    local lang = vim.treesitter.language.get_lang(ev.match)
+    local available_langs = require('nvim-treesitter').get_available()
+    local is_available = vim.tbl_contains(available_langs, lang)
+    if is_available then
+      local installed_langs = require('nvim-treesitter').get_installed()
+      local installed = vim.tbl_contains(installed_langs, lang)
+      if not installed then
+        require('nvim-treesitter').install(lang):wait()
+      end
+      vim.treesitter.start()
+      require('nvim-treesitter').indentexpr()
+    end
+  end,
+})
 
 vim.pack.add { { src = gh 'neovim/nvim-lspconfig' } }
 autocmd('LspAttach', {
@@ -218,4 +272,15 @@ vim.lsp.enable {
   'lua_ls',
   'nixd',
 }
-vim.diagnostic.config { virtual_text = true }
+
+vim.pack.add { { src = gh 'mrcjkb/rustaceanvim' } }
+
+vim.pack.add { { src = gh 'saecki/crates.nvim' } }
+require('crates').setup {
+  lsp = {
+    enabled = true,
+    actions = true,
+    completion = true,
+    hover = true,
+  },
+}
