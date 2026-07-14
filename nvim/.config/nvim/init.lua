@@ -54,6 +54,8 @@ end
 vim.pack.add { { src = gh 'nlknguyen/papercolor-theme' } }
 vim.cmd.colorscheme 'PaperColor'
 
+vim.pack.add { { src = gh 'tpope/vim-sleuth' } }
+
 vim.pack.add { { src = gh 'folke/which-key.nvim' } }
 vim.keymap.set('n', '<leader>?', function()
   require('which-key').show { global = false }
@@ -269,6 +271,7 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.lsp.enable {
+  'clangd',
   'lua_ls',
   'nixd',
 }

@@ -20,6 +20,7 @@ else
 	compinit -C;
 fi;
 
+eval "$(direnv hook zsh)"
 source ~/.zsh/fzf-tab/fzf-tab.zsh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(~/.cargo/bin/zsh-patina activate)"
