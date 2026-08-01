@@ -1,5 +1,6 @@
 export EDITOR=nvim
 export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.docker/sbx/bin:$PATH
 
 setopt SHARE_HISTORY HIST_IGNORE_DUPS
 SAVEHIST=50000
