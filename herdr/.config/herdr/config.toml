@@ -1,0 +1,14 @@
+onboarding = false
+
+[ui]
+mouse_capture = true
+
+[theme]
+name = "terminal"
+
+[keys]
+split_horizontal = "prefix+\""
+split_vertical = "prefix+%"
+
+switch_tab = "prefix+1..9"
+indexed.tabs = "alt"

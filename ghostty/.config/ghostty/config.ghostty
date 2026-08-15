@@ -1,5 +1,7 @@
 theme = papercolor
 
+window-decoration = none
+
 font-family = Iosevka
 font-size = 14
 font-feature = -calt, -liga, -dlig
