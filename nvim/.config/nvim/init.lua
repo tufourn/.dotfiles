@@ -274,6 +274,7 @@ vim.lsp.enable {
   'clangd',
   'lua_ls',
   'nixd',
+  'tinymist',
 }
 
 vim.pack.add { { src = gh 'mrcjkb/rustaceanvim' } }
@@ -287,3 +288,6 @@ require('crates').setup {
     hover = true,
   },
 }
+
+vim.pack.add { { src = gh 'chomosuke/typst-preview.nvim' } }
+require('typst-preview').setup {}
